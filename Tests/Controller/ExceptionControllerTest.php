@@ -25,7 +25,7 @@ class ExceptionControllerTest extends TestCase
         $twig = $this->createTwigEnv(['@Twig/Exception/error404.html.twig' => '<html>not found</html>']);
 
         $request = $this->createRequest('html');
-        $request->attributes->set('showException', false);
+        $request->query->set('showException', false);
         $exception = FlattenException::create(new \Exception(), 404);
         $controller = new ExceptionController($twig, /* "showException" defaults to --> */ true);
 
@@ -53,7 +53,7 @@ class ExceptionControllerTest extends TestCase
         $twig = $this->createTwigEnv(['@Twig/Exception/exception_full.html.twig' => '<html></html>']);
 
         $request = $this->createRequest('txt');
-        $request->attributes->set('showException', true);
+        $request->query->set('showException', true);
         $exception = FlattenException::create(new \Exception());
         $controller = new ExceptionController($twig, false);
 

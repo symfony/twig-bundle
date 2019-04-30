@@ -23,10 +23,12 @@ class PreviewErrorControllerTest extends TestCase
     public function testForwardRequestToConfiguredController()
     {
         $request = Request::create('whatever');
+        $request->query->set('showException', true);
         $response = new Response('');
         $code = 123;
         $logicalControllerName = 'foo:bar:baz';
 
+        /** @var HttpKernelInterface|\PHPUnit\Framework\MockObject\MockObject $kernel */
         $kernel = $this->getMockBuilder('\Symfony\Component\HttpKernel\HttpKernelInterface')->getMock();
         $kernel
             ->expects($this->once())
@@ -38,7 +40,7 @@ class PreviewErrorControllerTest extends TestCase
                     $exception = $request->attributes->get('exception');
                     $this->assertInstanceOf(FlattenException::class, $exception);
                     $this->assertEquals($code, $exception->getStatusCode());
-                    $this->assertFalse($request->attributes->get('showException'));
+                    $this->assertFalse($request->query->get('showException'));
 
                     return true;
                 }),

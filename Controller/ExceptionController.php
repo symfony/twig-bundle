@@ -48,14 +48,20 @@ class ExceptionController
      * the exception page (when true). If it is not present, the "debug" value passed into the constructor will
      * be used.
      *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Symfony\Component\Debug\Exception\FlattenException $exception
+     * @param \Symfony\Component\HttpKernel\Log\DebugLoggerInterface|null $logger
+     *
      * @return Response
      *
-     * @throws \InvalidArgumentException When the exception template does not exist
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function showAction(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null)
     {
         $currentContent = $this->getAndCleanOutputBuffering($request->headers->get('X-Php-Ob-Level', -1));
-        $showException = $request->attributes->get('showException', $this->debug); // As opposed to an additional parameter, this maintains BC
+        $showException = $request->query->getBoolean('showException', $this->debug); // As opposed to an additional parameter, this maintains BC
 
         $code = $exception->getStatusCode();
 
