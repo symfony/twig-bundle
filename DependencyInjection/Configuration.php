@@ -50,6 +50,7 @@ class Configuration implements ConfigurationInterface
         $this->addGlobalsSection($rootNode);
         $this->addTwigOptions($rootNode);
         $this->addTwigFormatOptions($rootNode);
+        $this->addEventDispatcher($rootNode);
 
         return $treeBuilder;
     }
@@ -202,5 +203,16 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+    }
+
+    private function addEventDispatcher(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->variableNode('event_dispatcher')
+                    ->info('The event dispatcher')
+                    ->defaultNull()->end()
+                ->end()
+            ->end();
     }
 }
