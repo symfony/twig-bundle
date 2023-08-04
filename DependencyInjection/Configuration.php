@@ -14,7 +14,6 @@ namespace Symfony\Bundle\TwigBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Mime\HtmlToTextConverter\HtmlToTextConverterInterface;
 
 /**
@@ -34,17 +33,6 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->docUrl('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/twig.html', 'symfony/twig-bundle')
-            ->beforeNormalization()
-            ->ifTrue(fn ($v) => \is_array($v) && \array_key_exists('exception_controller', $v))
-            ->then(function ($v) {
-                if (isset($v['exception_controller'])) {
-                    throw new InvalidConfigurationException('Option "exception_controller" under "twig" must be null or unset, use "error_controller" under "framework" instead.');
-                }
-
-                unset($v['exception_controller']);
-
-                return $v;
-            })
         ->end();
 
         $this->addFormThemesSection($rootNode);
@@ -146,10 +134,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('file_name_pattern')
                     ->example('*.twig')
                     ->info('Pattern of file name used for cache warmer and linter.')
-                    ->beforeNormalization()
-                        ->ifString()
-                            ->then(fn ($value) => [$value])
-                        ->end()
+                    ->acceptAndWrap(['string'])
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('paths', 'path')
