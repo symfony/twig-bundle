@@ -57,11 +57,11 @@ class TwigExtensionTest extends TestCase
     }
 
     /**
-     * @dataProvider getFormats
+     * @dataProvider getFormatsAndBuildDir
      */
-    public function testLoadFullConfiguration(string $format)
+    public function testLoadFullConfiguration(string $format, ?string $buildDir)
     {
-        $container = $this->createContainer();
+        $container = $this->createContainer($buildDir);
         $container->registerExtension(new TwigExtension());
         $this->loadFromFile($container, 'full', $format);
         $this->compileContainer($container);
@@ -92,13 +92,64 @@ class TwigExtensionTest extends TestCase
 
         // Twig options
         $options = $container->getDefinition('twig')->getArgument(1);
-        $this->assertTrue($options['auto_reload'], '->load() sets the auto_reload option');
+        $this->assertFalse($options['auto_reload'], '->load() sets the auto_reload option');
         $this->assertSame('name', $options['autoescape'], '->load() sets the autoescape option');
         $this->assertArrayNotHasKey('base_template_class', $options, '->load() does not set the base_template_class if none is provided');
-        $this->assertEquals('/tmp', $options['cache'], '->load() sets the cache option');
         $this->assertEquals('ISO-8859-1', $options['charset'], '->load() sets the charset option');
         $this->assertTrue($options['debug'], '->load() sets the debug option');
         $this->assertTrue($options['strict_variables'], '->load() sets the strict_variables option');
+        $this->assertEquals($buildDir !== null ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets the cache option');
+    }
+
+    /**
+     * @dataProvider getFormatsAndBuildDir
+     */
+    public function testLoadNoCacheConfiguration(string $format, ?string $buildDir)
+    {
+        $container = $this->createContainer($buildDir);
+        $container->registerExtension(new TwigExtension());
+        $this->loadFromFile($container, 'no-cache', $format);
+        $this->compileContainer($container);
+
+        $this->assertEquals(Environment::class, $container->getDefinition('twig')->getClass(), '->load() loads the twig.xml file');
+
+        // Twig options
+        $options = $container->getDefinition('twig')->getArgument(1);
+        $this->assertFalse($options['cache'], '->load() sets cache option to false');
+    }
+
+    /**
+     * @dataProvider getFormatsAndBuildDir
+     */
+    public function testLoadPathCacheConfiguration(string $format, ?string $buildDir)
+    {
+        $container = $this->createContainer($buildDir);
+        $container->registerExtension(new TwigExtension());
+        $this->loadFromFile($container, 'path-cache', $format);
+        $this->compileContainer($container);
+
+        $this->assertEquals(Environment::class, $container->getDefinition('twig')->getClass(), '->load() loads the twig.xml file');
+
+        // Twig options
+        $options = $container->getDefinition('twig')->getArgument(1);
+        $this->assertSame('random-path', $options['cache'], '->load() sets cache option to string path');
+    }
+
+    /**
+     * @dataProvider getFormatsAndBuildDir
+     */
+    public function testLoadProdCacheConfiguration(string $format, ?string $buildDir)
+    {
+        $container = $this->createContainer($buildDir);
+        $container->registerExtension(new TwigExtension());
+        $this->loadFromFile($container, 'prod-cache', $format);
+        $this->compileContainer($container);
+
+        $this->assertEquals(Environment::class, $container->getDefinition('twig')->getClass(), '->load() loads the twig.xml file');
+
+        // Twig options
+        $options = $container->getDefinition('twig')->getArgument(1);
+        $this->assertEquals($buildDir !== null ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets cache option to CacheChain reference');
     }
 
     /**
@@ -238,6 +289,19 @@ class TwigExtensionTest extends TestCase
         ];
     }
 
+    public static function getFormatsAndBuildDir(): array
+    {
+        return [
+            ['php', null],
+            ['php', __DIR__.'/build'],
+            ['yml', null],
+            ['yml', __DIR__.'/build'],
+            ['xml', null],
+            ['xml', __DIR__.'/build'],
+        ];
+    }
+
+
     /**
      * @dataProvider stopwatchExtensionAvailabilityProvider
      */
@@ -312,10 +376,11 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals(new Reference('my_converter'), $bodyRenderer->getArgument('$converter'));
     }
 
-    private function createContainer(): ContainerBuilder
+    private function createContainer(?string $buildDir = null): ContainerBuilder
     {
         $container = new ContainerBuilder(new ParameterBag([
             'kernel.cache_dir' => __DIR__,
+            'kernel.build_dir' => $buildDir ?? __DIR__,
             'kernel.project_dir' => __DIR__,
             'kernel.charset' => 'UTF-8',
             'kernel.debug' => false,

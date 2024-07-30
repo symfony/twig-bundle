@@ -134,7 +134,7 @@ class Configuration implements ConfigurationInterface
                     ->example('Twig\Template')
                     ->cannotBeEmpty()
                 ->end()
-                ->scalarNode('cache')->defaultValue('%kernel.cache_dir%/twig')->end()
+                ->scalarNode('cache')->defaultTrue()->end()
                 ->scalarNode('charset')->defaultValue('%kernel.charset%')->end()
                 ->booleanNode('debug')->defaultValue('%kernel.debug%')->end()
                 ->booleanNode('strict_variables')->defaultValue('%kernel.debug%')->end()
