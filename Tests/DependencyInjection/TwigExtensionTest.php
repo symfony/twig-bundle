@@ -11,7 +11,9 @@
 
 namespace Symfony\Bundle\TwigBundle\Tests\DependencyInjection;
 
-use Symfony\Bridge\PhpUnit\ExpectUserDeprecationMessageTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use Symfony\Bundle\TwigBundle\DependencyInjection\Compiler\RuntimeLoaderPass;
 use Symfony\Bundle\TwigBundle\DependencyInjection\TwigExtension;
 use Symfony\Bundle\TwigBundle\Tests\DependencyInjection\AcmeBundle\AcmeBundle;
@@ -33,8 +35,6 @@ use Twig\Environment;
 
 class TwigExtensionTest extends TestCase
 {
-    use ExpectUserDeprecationMessageTrait;
-
     public function testLoadEmptyConfiguration()
     {
         $container = $this->createContainer();
@@ -159,11 +159,9 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals(null !== $buildDir ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets cache option to CacheChain reference');
     }
 
-    /**
-     * @group legacy
-     *
-     * @dataProvider getFormats
-     */
+    #[IgnoreDeprecations]
+    #[Group('legacy')]
+    #[DataProvider('getFormats')]
     public function testLoadCustomBaseTemplateClassConfiguration(string $format)
     {
         $container = $this->createContainer();
