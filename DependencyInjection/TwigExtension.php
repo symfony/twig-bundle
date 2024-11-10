@@ -25,6 +25,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Component\Translation\Translator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Contracts\Service\ResetInterface;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Attribute\AsTwigFunction;
@@ -67,6 +68,10 @@ class TwigExtension extends Extension
 
         if (!$container::willBeAvailable('symfony/translation', Translator::class, ['symfony/twig-bundle'])) {
             $container->removeDefinition('twig.translation.extractor');
+        }
+
+        if ($container::willBeAvailable('symfony/validator', Constraint::class, ['symfony/twig-bundle'])) {
+            $loader->load('validator.php');
         }
 
         foreach ($configs as $key => $config) {

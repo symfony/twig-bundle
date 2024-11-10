@@ -6,6 +6,7 @@ CHANGELOG
 
  * Enable `#[AsTwigFilter]`, `#[AsTwigFunction]` and `#[AsTwigTest]` attributes
    to configure extensions on runtime classes
+ * Add support for a `twig` validator
 
 7.1
 ---
