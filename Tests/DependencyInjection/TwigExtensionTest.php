@@ -28,6 +28,7 @@ use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
 
 class TwigExtensionTest extends TestCase
@@ -53,6 +54,12 @@ class TwigExtensionTest extends TestCase
 
         if (class_exists(Mailer::class)) {
             $this->assertCount(2, $container->getDefinition('twig.mime_body_renderer')->getArguments());
+        }
+
+        if (interface_exists(ValidatorInterface::class)) {
+            $this->assertTrue($container->hasDefinition('twig.validator'));
+        } else {
+            $this->assertFalse($container->hasDefinition('twig.validator'));
         }
     }
 

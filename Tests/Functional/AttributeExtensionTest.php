@@ -43,6 +43,7 @@ class AttributeExtensionTest extends TestCase
             public function registerContainerConfiguration(LoaderInterface $loader): void
             {
                 $loader->load(static function (ContainerBuilder $container) {
+                    $container->setParameter('kernel.secret', 'secret');
                     $container->register(StaticExtensionWithAttributes::class, StaticExtensionWithAttributes::class)
                         ->setAutoconfigured(true);
                     $container->register(RuntimeExtensionWithAttributes::class, RuntimeExtensionWithAttributes::class)
