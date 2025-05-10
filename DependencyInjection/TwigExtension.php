@@ -30,6 +30,7 @@ use Symfony\Contracts\Service\ResetInterface;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Attribute\AsTwigFunction;
 use Twig\Attribute\AsTwigTest;
+use Twig\Cache\FilesystemCache;
 use Twig\Environment;
 use Twig\Extension\ExtensionInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -167,6 +168,31 @@ class TwigExtension extends Extension
             }
         }
 
+        if (true === $config['cache']) {
+            $autoReloadOrDefault = $container->getParameterBag()->resolveValue($config['auto_reload'] ?? $config['debug']);
+            $buildDir = $container->getParameter('kernel.build_dir');
+            $cacheDir = $container->getParameter('kernel.cache_dir');
+
+            if ($autoReloadOrDefault || $cacheDir === $buildDir) {
+                $config['cache'] = '%kernel.cache_dir%/twig';
+            }
+        }
+
+        if (true === $config['cache']) {
+            $config['cache'] = new Reference('twig.template_cache.chain');
+        } else {
+            $container->removeDefinition('twig.template_cache.chain');
+            $container->removeDefinition('twig.template_cache.runtime_cache');
+            $container->removeDefinition('twig.template_cache.readonly_cache');
+            $container->removeDefinition('twig.template_cache.warmup_cache');
+
+            if (false === $config['cache']) {
+                $container->removeDefinition('twig.template_cache_warmer');
+            } else {
+                $container->getDefinition('twig.template_cache_warmer')->replaceArgument(2, null);
+            }
+        }
+
         if (isset($config['autoescape_service'])) {
             $config['autoescape'] = [new Reference($config['autoescape_service']), $config['autoescape_service_method'] ?? '__invoke'];
         } else {
@@ -191,10 +217,6 @@ class TwigExtension extends Extension
         $container->registerAttributeForAutoconfiguration(AsTwigFilter::class, AttributeExtensionPass::autoconfigureFromAttribute(...));
         $container->registerAttributeForAutoconfiguration(AsTwigFunction::class, AttributeExtensionPass::autoconfigureFromAttribute(...));
         $container->registerAttributeForAutoconfiguration(AsTwigTest::class, AttributeExtensionPass::autoconfigureFromAttribute(...));
-
-        if (false === $config['cache']) {
-            $container->removeDefinition('twig.template_cache_warmer');
-        }
     }
 
     private function getBundleTemplatePaths(ContainerBuilder $container, array $config): array
