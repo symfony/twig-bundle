@@ -11,11 +11,15 @@
 
 namespace Symfony\Bundle\TwigBundle\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\BeforeClass;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\TwigBundle\Tests\TestCase;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
 use Twig\Attribute\AsTwigFilter;
@@ -23,23 +27,23 @@ use Twig\Attribute\AsTwigFunction;
 use Twig\Attribute\AsTwigTest;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
+use Twig\Extension\AbstractExtension;
 use Twig\Extension\AttributeExtension;
 
 class AttributeExtensionTest extends TestCase
 {
-    public function testExtensionWithAttributes()
+    /** @beforeClass */
+    #[BeforeClass]
+    public static function assertTwigVersion(): void
     {
         if (!class_exists(AttributeExtension::class)) {
             self::markTestSkipped('Twig 3.21 is required.');
         }
+    }
 
-        $kernel = new class('test', true) extends Kernel
-        {
-            public function registerBundles(): iterable
-            {
-                return [new FrameworkBundle(), new TwigBundle()];
-            }
-
+    public function testExtensionWithAttributes()
+    {
+        $kernel = new class extends AttributeExtensionKernel {
             public function registerContainerConfiguration(LoaderInterface $loader): void
             {
                 $loader->load(static function (ContainerBuilder $container) {
@@ -52,11 +56,6 @@ class AttributeExtensionTest extends TestCase
 
                     $container->setAlias('twig_test', 'twig')->setPublic(true);
                 });
-            }
-
-            public function getProjectDir(): string
-            {
-                return sys_get_temp_dir().'/'.Kernel::VERSION.'/AttributeExtension';
             }
         };
 
@@ -73,15 +72,53 @@ class AttributeExtensionTest extends TestCase
         $twig->getRuntime(StaticExtensionWithAttributes::class);
     }
 
+    public function testInvalidExtensionClass()
+    {
+        $kernel = new class extends AttributeExtensionKernel {
+            public function registerContainerConfiguration(LoaderInterface $loader): void
+            {
+                $loader->load(static function (ContainerBuilder $container) {
+                    $container->register(InvalidExtensionWithAttributes::class, InvalidExtensionWithAttributes::class)
+                        ->setAutoconfigured(true);
+                });
+            }
+        };
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('The class "Symfony\Bundle\TwigBundle\Tests\Functional\InvalidExtensionWithAttributes" cannot extend "Twig\Extension\AbstractExtension" and use the "#[Twig\Attribute\AsTwigFilter]" attribute on method "funFilter()", choose one or the other.');
+
+        $kernel->boot();
+    }
+
+
     /**
      * @before
      * @after
      */
+    #[Before, After]
     protected function deleteTempDir()
     {
         if (file_exists($dir = sys_get_temp_dir().'/'.Kernel::VERSION.'/AttributeExtension')) {
             (new Filesystem())->remove($dir);
         }
+    }
+}
+
+abstract class AttributeExtensionKernel extends Kernel
+{
+    public function __construct()
+    {
+        parent::__construct('test', true);
+    }
+
+    public function registerBundles(): iterable
+    {
+        return [new FrameworkBundle(), new TwigBundle()];
+    }
+
+    public function getProjectDir(): string
+    {
+        return sys_get_temp_dir().'/'.Kernel::VERSION.'/AttributeExtension';
     }
 }
 
@@ -112,10 +149,19 @@ class RuntimeExtensionWithAttributes
     {
     }
 
-    #[AsTwigFilter('foo')]
-    #[AsTwigFunction('foo')]
+    #[AsTwigFilter('prefix_foo')]
+    #[AsTwigFunction('prefix_foo')]
     public function prefix(string $value): string
     {
         return $this->prefix.$value;
+    }
+}
+
+class InvalidExtensionWithAttributes extends AbstractExtension
+{
+    #[AsTwigFilter('fun')]
+    public function funFilter(): string
+    {
+        return 'fun';
     }
 }
