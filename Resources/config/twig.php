@@ -44,6 +44,7 @@ use Twig\Extension\EscaperExtension;
 use Twig\Extension\OptimizerExtension;
 use Twig\Extension\StagingExtension;
 use Twig\ExtensionSet;
+use Twig\ExpressionParser\Infix\BinaryOperatorExpressionParser;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
 use Twig\Profiler\Profile;
@@ -63,6 +64,7 @@ return static function (ContainerConfigurator $container) {
             ->tag('container.preload', ['class' => EscaperExtension::class])
             ->tag('container.preload', ['class' => OptimizerExtension::class])
             ->tag('container.preload', ['class' => StagingExtension::class])
+            ->tag('container.preload', ['class' => BinaryOperatorExpressionParser::class])
             ->tag('container.preload', ['class' => ExtensionSet::class])
             ->tag('container.preload', ['class' => Template::class])
             ->tag('container.preload', ['class' => TemplateWrapper::class])
