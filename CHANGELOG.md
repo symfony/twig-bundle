@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+8.0
+---
+
+ * Make `TemplateCacheWarmer` class `final`
+
 7.3
 ---
 
