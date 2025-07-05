@@ -308,7 +308,6 @@ class TwigExtensionTest extends TestCase
         ];
     }
 
-
     /**
      * @dataProvider stopwatchExtensionAvailabilityProvider
      */
