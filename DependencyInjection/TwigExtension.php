@@ -30,7 +30,6 @@ use Symfony\Contracts\Service\ResetInterface;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Attribute\AsTwigFunction;
 use Twig\Attribute\AsTwigTest;
-use Twig\Cache\FilesystemCache;
 use Twig\Environment;
 use Twig\Extension\ExtensionInterface;
 use Twig\Extension\RuntimeExtensionInterface;
