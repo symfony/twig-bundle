@@ -105,7 +105,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals('ISO-8859-1', $options['charset'], '->load() sets the charset option');
         $this->assertTrue($options['debug'], '->load() sets the debug option');
         $this->assertTrue($options['strict_variables'], '->load() sets the strict_variables option');
-        $this->assertEquals($buildDir !== null ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets the cache option');
+        $this->assertEquals(null !== $buildDir ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets the cache option');
     }
 
     /**
@@ -156,7 +156,7 @@ class TwigExtensionTest extends TestCase
 
         // Twig options
         $options = $container->getDefinition('twig')->getArgument(1);
-        $this->assertEquals($buildDir !== null ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets cache option to CacheChain reference');
+        $this->assertEquals(null !== $buildDir ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets cache option to CacheChain reference');
     }
 
     /**
@@ -307,7 +307,6 @@ class TwigExtensionTest extends TestCase
             ['xml', __DIR__.'/build'],
         ];
     }
-
 
     /**
      * @dataProvider stopwatchExtensionAvailabilityProvider
