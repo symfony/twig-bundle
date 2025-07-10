@@ -38,13 +38,13 @@ use Symfony\Bundle\TwigBundle\DependencyInjection\Configurator\EnvironmentConfig
 use Symfony\Bundle\TwigBundle\TemplateIterator;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment;
+use Twig\ExpressionParser\Infix\BinaryOperatorExpressionParser;
 use Twig\Extension\CoreExtension;
 use Twig\Extension\DebugExtension;
 use Twig\Extension\EscaperExtension;
 use Twig\Extension\OptimizerExtension;
 use Twig\Extension\StagingExtension;
 use Twig\ExtensionSet;
-use Twig\ExpressionParser\Infix\BinaryOperatorExpressionParser;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
 use Twig\Profiler\Profile;
