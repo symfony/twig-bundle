@@ -92,7 +92,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals(3.14, $calls[4][1][1], '->load() registers variables as Twig globals');
 
         // Yaml and Php specific configs
-        if (\in_array($format, ['yml', 'php'])) {
+        if (\in_array($format, ['yml', 'php'], true)) {
             $this->assertEquals('bad', $calls[5][1][0], '->load() registers variables as Twig globals');
             $this->assertEquals(['key' => 'foo'], $calls[5][1][1], '->load() registers variables as Twig globals');
         }
