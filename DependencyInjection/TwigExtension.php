@@ -201,7 +201,6 @@ class TwigExtension extends Extension
         $container->getDefinition('twig')->replaceArgument(1, array_intersect_key($config, [
             'debug' => true,
             'charset' => true,
-            'base_template_class' => true,
             'strict_variables' => true,
             'autoescape' => true,
             'cache' => true,

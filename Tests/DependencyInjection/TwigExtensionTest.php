@@ -101,7 +101,6 @@ class TwigExtensionTest extends TestCase
         $options = $container->getDefinition('twig')->getArgument(1);
         $this->assertFalse($options['auto_reload'], '->load() sets the auto_reload option');
         $this->assertSame('name', $options['autoescape'], '->load() sets the autoescape option');
-        $this->assertArrayNotHasKey('base_template_class', $options, '->load() does not set the base_template_class if none is provided');
         $this->assertEquals('ISO-8859-1', $options['charset'], '->load() sets the charset option');
         $this->assertTrue($options['debug'], '->load() sets the debug option');
         $this->assertTrue($options['strict_variables'], '->load() sets the strict_variables option');
@@ -157,25 +156,6 @@ class TwigExtensionTest extends TestCase
         // Twig options
         $options = $container->getDefinition('twig')->getArgument(1);
         $this->assertEquals(null !== $buildDir ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets cache option to CacheChain reference');
-    }
-
-    /**
-     * @group legacy
-     *
-     * @dataProvider getFormats
-     */
-    public function testLoadCustomBaseTemplateClassConfiguration(string $format)
-    {
-        $container = $this->createContainer();
-        $container->registerExtension(new TwigExtension());
-
-        $this->expectUserDeprecationMessage('Since symfony/twig-bundle 7.1: The child node "base_template_class" at path "twig" is deprecated.');
-
-        $this->loadFromFile($container, 'templateClass', $format);
-        $this->compileContainer($container);
-
-        $options = $container->getDefinition('twig')->getArgument(1);
-        $this->assertEquals('stdClass', $options['base_template_class'], '->load() sets the base_template_class option');
     }
 
     /**
