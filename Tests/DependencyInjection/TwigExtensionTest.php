@@ -11,7 +11,6 @@
 
 namespace Symfony\Bundle\TwigBundle\Tests\DependencyInjection;
 
-use Symfony\Bridge\PhpUnit\ExpectUserDeprecationMessageTrait;
 use Symfony\Bundle\TwigBundle\DependencyInjection\Compiler\RuntimeLoaderPass;
 use Symfony\Bundle\TwigBundle\DependencyInjection\TwigExtension;
 use Symfony\Bundle\TwigBundle\Tests\DependencyInjection\AcmeBundle\AcmeBundle;
@@ -33,8 +32,6 @@ use Twig\Environment;
 
 class TwigExtensionTest extends TestCase
 {
-    use ExpectUserDeprecationMessageTrait;
-
     public function testLoadEmptyConfiguration()
     {
         $container = $this->createContainer();
