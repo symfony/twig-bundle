@@ -63,9 +63,7 @@ class TwigExtensionTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider getFormatsAndBuildDir
-     */
+    #[DataProvider('getFormatsAndBuildDir')]
     public function testLoadFullConfiguration(string $format, ?string $buildDir)
     {
         $container = $this->createContainer($buildDir);
@@ -108,9 +106,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals(null !== $buildDir ? new Reference('twig.template_cache.chain') : '%kernel.cache_dir%/twig', $options['cache'], '->load() sets the cache option');
     }
 
-    /**
-     * @dataProvider getFormatsAndBuildDir
-     */
+    #[DataProvider('getFormatsAndBuildDir')]
     public function testLoadNoCacheConfiguration(string $format, ?string $buildDir)
     {
         $container = $this->createContainer($buildDir);
@@ -125,9 +121,7 @@ class TwigExtensionTest extends TestCase
         $this->assertFalse($options['cache'], '->load() sets cache option to false');
     }
 
-    /**
-     * @dataProvider getFormatsAndBuildDir
-     */
+    #[DataProvider('getFormatsAndBuildDir')]
     public function testLoadPathCacheConfiguration(string $format, ?string $buildDir)
     {
         $container = $this->createContainer($buildDir);
@@ -142,9 +136,7 @@ class TwigExtensionTest extends TestCase
         $this->assertSame('random-path', $options['cache'], '->load() sets cache option to string path');
     }
 
-    /**
-     * @dataProvider getFormatsAndBuildDir
-     */
+    #[DataProvider('getFormatsAndBuildDir')]
     public function testLoadProdCacheConfiguration(string $format, ?string $buildDir)
     {
         $container = $this->createContainer($buildDir);
@@ -176,9 +168,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals('stdClass', $options['base_template_class'], '->load() sets the base_template_class option');
     }
 
-    /**
-     * @dataProvider getFormats
-     */
+    #[DataProvider('getFormats')]
     public function testLoadCustomTemplateEscapingGuesserConfiguration(string $format)
     {
         $container = $this->createContainer();
@@ -190,9 +180,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals([new Reference('my_project.some_bundle.template_escaping_guesser'), 'guess'], $options['autoescape']);
     }
 
-    /**
-     * @dataProvider getFormats
-     */
+    #[DataProvider('getFormats')]
     public function testLoadDefaultTemplateEscapingGuesserConfiguration(string $format)
     {
         $container = $this->createContainer();
@@ -204,9 +192,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals('name', $options['autoescape']);
     }
 
-    /**
-     * @dataProvider getFormats
-     */
+    #[DataProvider('getFormats')]
     public function testLoadCustomDateFormats(string $fileFormat)
     {
         $container = $this->createContainer();
@@ -253,9 +239,7 @@ class TwigExtensionTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider getFormats
-     */
+    #[DataProvider('getFormats')]
     public function testTwigLoaderPaths(string $format)
     {
         $container = $this->createContainer();
@@ -306,9 +290,7 @@ class TwigExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider stopwatchExtensionAvailabilityProvider
-     */
+    #[DataProvider('stopwatchExtensionAvailabilityProvider')]
     public function testStopwatchExtensionAvailability(bool $debug, bool $stopwatchEnabled, bool $expected)
     {
         $container = $this->createContainer();
@@ -361,9 +343,7 @@ class TwigExtensionTest extends TestCase
         $this->assertEquals('foo', $args['FooClass']->getValues()[0]);
     }
 
-    /**
-     * @dataProvider getFormats
-     */
+    #[DataProvider('getFormats')]
     public function testCustomHtmlToTextConverterService(string $format)
     {
         if (!class_exists(Mailer::class)) {

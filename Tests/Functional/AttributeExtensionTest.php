@@ -32,7 +32,6 @@ use Twig\Extension\AttributeExtension;
 
 class AttributeExtensionTest extends TestCase
 {
-    /** @beforeClass */
     #[BeforeClass]
     public static function assertTwigVersion(): void
     {
@@ -90,11 +89,6 @@ class AttributeExtensionTest extends TestCase
         $kernel->boot();
     }
 
-    /**
-     * @before
-     *
-     * @after
-     */
     #[Before, After]
     protected function deleteTempDir()
     {
