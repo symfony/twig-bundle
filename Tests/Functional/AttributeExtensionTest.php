@@ -80,11 +80,6 @@ class AttributeExtensionTest extends TestCase
         $kernel->boot();
     }
 
-    /**
-     * @before
-     *
-     * @after
-     */
     #[Before, After]
     protected function deleteTempDir()
     {
