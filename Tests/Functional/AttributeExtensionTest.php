@@ -130,8 +130,9 @@ class StaticExtensionWithAttributes
 
 class RuntimeExtensionWithAttributes
 {
-    public function __construct(private bool $prefix)
-    {
+    public function __construct(
+        private string $prefix,
+    ) {
     }
 
     #[AsTwigFilter('prefix_foo')]
