@@ -59,9 +59,8 @@ class Configuration implements ConfigurationInterface
     private function addFormThemesSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
-            ->fixXmlConfig('form_theme')
             ->children()
-                ->arrayNode('form_themes')
+                ->arrayNode('form_themes', 'form_theme')
                     ->addDefaultChildrenIfNoneSet()
                     ->prototype('scalar')->defaultValue('form_div_layout.html.twig')->end()
                     ->example(['@My/form.html.twig'])
@@ -77,9 +76,8 @@ class Configuration implements ConfigurationInterface
     private function addGlobalsSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
-            ->fixXmlConfig('global')
             ->children()
-                ->arrayNode('globals')
+                ->arrayNode('globals', 'global')
                     ->normalizeKeys(false)
                     ->useAttributeAsKey('key')
                     ->example(['foo' => '@bar', 'pi' => 3.14])
@@ -127,7 +125,6 @@ class Configuration implements ConfigurationInterface
     private function addTwigOptions(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
-            ->fixXmlConfig('path')
             ->children()
                 ->scalarNode('autoescape_service')->defaultNull()->end()
                 ->scalarNode('autoescape_service_method')->defaultNull()->end()
@@ -150,7 +147,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->prototype('scalar')->end()
                 ->end()
-                ->arrayNode('paths')
+                ->arrayNode('paths', 'path')
                     ->normalizeKeys(false)
                     ->useAttributeAsKey('paths')
                     ->beforeNormalization()
