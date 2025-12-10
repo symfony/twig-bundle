@@ -14,6 +14,7 @@ namespace Symfony\Bundle\TwigBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Mime\HtmlToTextConverter\HtmlToTextConverterInterface;
 
 /**
@@ -33,7 +34,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->docUrl('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/twig.html', 'symfony/twig-bundle')
-        ->end();
+        ;
 
         $this->addFormThemesSection($rootNode);
         $this->addGlobalsSection($rootNode);
