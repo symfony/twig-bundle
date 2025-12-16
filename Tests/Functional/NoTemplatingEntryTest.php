@@ -61,7 +61,7 @@ class NoTemplatingEntryKernel extends Kernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(function (ContainerBuilder $container) {
+        $loader->load(static function (ContainerBuilder $container) {
             $config = [
                 'secret' => '$ecret',
                 'form' => ['enabled' => false],
