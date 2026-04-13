@@ -36,7 +36,7 @@ class Configuration implements ConfigurationInterface
             ->docUrl('https://symfony.com/doc/{version:major}.{version:minor}/reference/configuration/twig.html', 'symfony/twig-bundle')
             ->beforeNormalization()
                 ->ifArray()
-                ->then(function ($v) {
+                ->then(static function ($v) {
                     if (!\array_key_exists('exception_controller', $v)) {
                         return $v;
                     }
@@ -70,8 +70,8 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->defaultValue('form_div_layout.html.twig')->end()
                     ->example(['@My/form.html.twig'])
                     ->validate()
-                        ->ifTrue(fn ($v) => !\in_array('form_div_layout.html.twig', $v, true))
-                        ->then(fn ($v) => array_merge(['form_div_layout.html.twig'], $v))
+                        ->ifTrue(static fn ($v) => !\in_array('form_div_layout.html.twig', $v, true))
+                        ->then(static fn ($v) => array_merge(['form_div_layout.html.twig'], $v))
                     ->end()
                 ->end()
             ->end()
@@ -89,8 +89,8 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->normalizeKeys(false)
                         ->beforeNormalization()
-                            ->ifTrue(fn ($v) => \is_string($v) && str_starts_with($v, '@'))
-                            ->then(function ($v) {
+                            ->ifTrue(static fn ($v) => \is_string($v) && str_starts_with($v, '@'))
+                            ->then(static function ($v) {
                                 if (str_starts_with($v, '@@')) {
                                     return substr($v, 1);
                                 }
@@ -99,7 +99,7 @@ class Configuration implements ConfigurationInterface
                             })
                         ->end()
                         ->beforeNormalization()
-                            ->ifTrue(function ($v) {
+                            ->ifTrue(static function ($v) {
                                 if (\is_array($v)) {
                                     $keys = array_keys($v);
                                     sort($keys);
@@ -109,7 +109,7 @@ class Configuration implements ConfigurationInterface
 
                                 return true;
                             })
-                            ->then(fn ($v) => ['value' => $v])
+                            ->then(static fn ($v) => ['value' => $v])
                         ->end()
                         ->children()
                             ->scalarNode('id')->end()
@@ -159,7 +159,7 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('paths')
                     ->beforeNormalization()
                         ->ifArray()
-                        ->then(function ($paths) {
+                        ->then(static function ($paths) {
                             $normalized = [];
                             foreach ($paths as $path => $namespace) {
                                 if (\is_array($namespace)) {

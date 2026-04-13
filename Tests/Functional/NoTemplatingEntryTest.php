@@ -62,7 +62,7 @@ class NoTemplatingEntryKernel extends Kernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(function (ContainerBuilder $container) {
+        $loader->load(static function (ContainerBuilder $container) {
             $config = [
                 'http_method_override' => false,
                 'php_errors' => ['log' => true],
