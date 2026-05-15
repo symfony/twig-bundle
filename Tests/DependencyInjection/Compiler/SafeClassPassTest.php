@@ -68,6 +68,32 @@ class SafeClassPassTest extends TestCase
         $this->assertContains(['addSafeClass', [\stdClass::class, ['js']]], $calls);
     }
 
+    public function testSafeClassWithAllSentinel()
+    {
+        $this->container->register('my_class')->setClass(\stdClass::class)
+            ->addResourceTag('twig.safe_class', ['strategy' => 'all']);
+
+        $this->pass->process($this->container);
+
+        $this->assertSame(
+            [['addSafeClass', [\stdClass::class, ['all']]]],
+            $this->container->getDefinition('twig.runtime.escaper')->getMethodCalls()
+        );
+    }
+
+    public function testSafeClassWithCustomStrategy()
+    {
+        $this->container->register('my_class')->setClass(\stdClass::class)
+            ->addResourceTag('twig.safe_class', ['strategy' => 'markdown']);
+
+        $this->pass->process($this->container);
+
+        $this->assertSame(
+            [['addSafeClass', [\stdClass::class, ['markdown']]]],
+            $this->container->getDefinition('twig.runtime.escaper')->getMethodCalls()
+        );
+    }
+
     public function testThrowsOnMissingStrategy()
     {
         $this->container->register('my_class')->setClass(\stdClass::class)
@@ -86,6 +112,39 @@ class SafeClassPassTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "strategy" attribute of the "twig.safe_class" tag on "my_class" must be a string or a list of strings.');
+
+        $this->pass->process($this->container);
+    }
+
+    public function testThrowsOnMixedStrategyArray()
+    {
+        $this->container->register('my_class')->setClass(\stdClass::class)
+            ->addResourceTag('twig.safe_class', ['strategy' => ['html', 123]]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "strategy" attribute of the "twig.safe_class" tag on "my_class" must be a string or a list of strings.');
+
+        $this->pass->process($this->container);
+    }
+
+    public function testThrowsOnEmptyStrategyArray()
+    {
+        $this->container->register('my_class')->setClass(\stdClass::class)
+            ->addResourceTag('twig.safe_class', ['strategy' => []]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "strategy" attribute of the "twig.safe_class" tag on "my_class" must not be empty; use "all" to mark the class safe for every strategy.');
+
+        $this->pass->process($this->container);
+    }
+
+    public function testThrowsOnUppercaseStrategy()
+    {
+        $this->container->register('my_class')->setClass(\stdClass::class)
+            ->addResourceTag('twig.safe_class', ['strategy' => 'JS']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "strategy" attribute of the "twig.safe_class" tag on "my_class" contains the invalid strategy "JS"');
 
         $this->pass->process($this->container);
     }
