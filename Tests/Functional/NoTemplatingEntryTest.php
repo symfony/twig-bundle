@@ -43,7 +43,7 @@ class NoTemplatingEntryTest extends TestCase
 
     protected function deleteTempDir()
     {
-        if (!file_exists($dir = sys_get_temp_dir().'/'.Kernel::VERSION.'/NoTemplatingEntryKernel')) {
+        if (!file_exists($dir = sys_get_temp_dir().'/NoTemplatingEntryKernel')) {
             return;
         }
 
@@ -79,11 +79,11 @@ class NoTemplatingEntryKernel extends Kernel
 
     public function getCacheDir(): string
     {
-        return sys_get_temp_dir().'/'.Kernel::VERSION.'/NoTemplatingEntryKernel/cache/'.$this->environment;
+        return sys_get_temp_dir().'/NoTemplatingEntryKernel/cache/'.$this->environment;
     }
 
     public function getLogDir(): string
     {
-        return sys_get_temp_dir().'/'.Kernel::VERSION.'/NoTemplatingEntryKernel/logs';
+        return sys_get_temp_dir().'/NoTemplatingEntryKernel/logs';
     }
 }
